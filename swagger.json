@@ -7,12 +7,12 @@
     },
     "servers": [
         {
-            "url": "http://localhost:3000",
-            "description": "Local development server"
-        },
-        {
             "url": "https://stockeasy-api-a0gb.onrender.com",
             "description": "Production server"
+        },
+        {
+            "url": "http://localhost:3000",
+            "description": "Local development server"
         }
     ],
     "tags": [
@@ -47,38 +47,20 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "required": [
-                                    "name",
-                                    "quantity",
-                                    "price",
-                                    "category"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Motorcycle Helmet"
-                                    },
-                                    "quantity": {
-                                        "type": "integer",
-                                        "example": 10
-                                    },
-                                    "price": {
-                                        "type": "number",
-                                        "example": 89.99
-                                    },
-                                    "category": {
-                                        "type": "string",
-                                        "example": "Safety Gear"
-                                    }
-                                }
+                                "$ref": "#/components/schemas/ProductInput"
+                            },
+                            "example": {
+                                "name": "Motorcycle Gloves",
+                                "quantity": 15,
+                                "price": 24.99,
+                                "category": "Safety Gear"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "description": "Product created successfully"
+                        "description": "Product created successfully. Returns the new product ID."
                     },
                     "400": {
                         "description": "Invalid product data"
@@ -90,21 +72,23 @@
             }
         },
         "/products/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "MongoDB product ID",
+                    "schema": {
+                        "type": "string",
+                        "example": "6ad50ca04691e523e98414d7"
+                    }
+                }
+            ],
             "get": {
                 "tags": [
                     "Products"
                 ],
                 "summary": "Get a product by ID",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Product found"
@@ -114,6 +98,98 @@
                     },
                     "404": {
                         "description": "Product not found"
+                    },
+                    "500": {
+                        "description": "Failed to retrieve product"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update a product",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductInput"
+                            },
+                            "example": {
+                                "name": "Motorcycle Gloves",
+                                "quantity": 20,
+                                "price": 29.99,
+                                "category": "Safety Gear"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Product updated successfully"
+                    },
+                    "400": {
+                        "description": "Invalid product ID or product data"
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    },
+                    "500": {
+                        "description": "Failed to update product"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete a product",
+                "responses": {
+                    "200": {
+                        "description": "Product deleted successfully"
+                    },
+                    "400": {
+                        "description": "Invalid product ID"
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    },
+                    "500": {
+                        "description": "Failed to delete product"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ProductInput": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "quantity",
+                    "price",
+                    "category"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Motorcycle Helmet"
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 10
+                    },
+                    "price": {
+                        "type": "number",
+                        "minimum": 0,
+                        "example": 89.99
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "Safety Gear"
                     }
                 }
             }
