@@ -10,6 +10,7 @@ async function getAllProducts(req, res) {
 
         res.status(200).json(products);
     } catch (error) {
+        console.error("Get all products error:", error.message);
         res.status(500).json({ error: "Failed to retrieve products." });
     }
 }
@@ -32,6 +33,7 @@ async function getProductById(req, res) {
 
         res.status(200).json(product);
     } catch (error) {
+        console.error("Get product by ID error:", error.message);
         res.status(500).json({ error: "Failed to retrieve product." });
     }
 }
@@ -60,7 +62,70 @@ async function createProduct(req, res) {
             productId: result.insertedId,
         });
     } catch (error) {
+        console.error("Create product error:", error.message);
         res.status(500).json({ error: "Failed to create product." });
+    }
+}
+
+// PUT: actualizar un producto existente
+async function updateProduct(req, res) {
+    try {
+        if (!ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ error: "Invalid product ID." });
+        }
+
+        const validationError = validateProduct(req.body);
+
+        if (validationError) {
+            return res.status(400).json({ error: validationError });
+        }
+
+        const db = req.app.locals.db;
+        const result = await db.collection("products").updateOne(
+            { _id: new ObjectId(req.params.id) },
+            {
+                $set: {
+                    name: req.body.name.trim(),
+                    quantity: req.body.quantity,
+                    price: req.body.price,
+                    category: req.body.category.trim(),
+                },
+            }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: "Product not found." });
+        }
+
+        return res.status(204).send();
+    } catch (error) {
+        console.error("Update product error:", error.message);
+        res.status(500).json({ error: "Failed to update product." });
+    }
+}
+
+// DELETE: eliminar un producto
+async function deleteProduct(req, res) {
+    try {
+        if (!ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ error: "Invalid product ID." });
+        }
+
+        const db = req.app.locals.db;
+        const result = await db.collection("products").deleteOne({
+            _id: new ObjectId(req.params.id),
+        });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ error: "Product not found." });
+        }
+
+        res.status(200).json({
+            message: "Product deleted successfully.",
+        });
+    } catch (error) {
+        console.error("Delete product error:", error.message);
+        res.status(500).json({ error: "Failed to delete product." });
     }
 }
 
@@ -68,4 +133,6 @@ module.exports = {
     getAllProducts,
     getProductById,
     createProduct,
+    updateProduct,
+    deleteProduct,
 };
