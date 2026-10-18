@@ -1,0 +1,122 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "StockEasy API",
+        "description": "API for managing inventory products.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local development server"
+        },
+        {
+            "url": "https://stockeasy-api-a0gb.onrender.com",
+            "description": "Production server"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Products",
+            "description": "Inventory product operations"
+        }
+    ],
+    "paths": {
+        "/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get all products",
+                "responses": {
+                    "200": {
+                        "description": "List of products retrieved successfully"
+                    },
+                    "500": {
+                        "description": "Failed to retrieve products"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create a product",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "quantity",
+                                    "price",
+                                    "category"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Motorcycle Helmet"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 89.99
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Safety Gear"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Product created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid product data"
+                    },
+                    "500": {
+                        "description": "Failed to create product"
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get a product by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product found"
+                    },
+                    "400": {
+                        "description": "Invalid product ID"
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    }
+                }
+            }
+        }
+    }
+}
