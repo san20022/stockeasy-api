@@ -1,6 +1,6 @@
 
 const { ObjectId } = require("mongodb");
-const { validateProduct } = require("../models/Product");
+const { validateProduct } = require("../models/product");
 
 // GET: obtener todos los productos
 async function getAllProducts(req, res) {

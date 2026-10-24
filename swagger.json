@@ -2,17 +2,17 @@
     "openapi": "3.0.3",
     "info": {
         "title": "StockEasy API",
-        "description": "API for managing inventory products.",
-        "version": "1.0.0"
+        "description": "API for managing inventory products, including validation and error handling.",
+        "version": "1.1.0"
     },
     "servers": [
         {
-            "url": "https://stockeasy-api-a0gb.onrender.com",
-            "description": "Production server"
-        },
-        {
             "url": "http://localhost:3000",
             "description": "Local development server"
+        },
+        {
+            "url": "https://stockeasy-api-a0gb.onrender.com",
+            "description": "Production server"
         }
     ],
     "tags": [
@@ -30,10 +30,10 @@
                 "summary": "Get all products",
                 "responses": {
                     "200": {
-                        "description": "List of products retrieved successfully"
+                        "description": "Products retrieved successfully"
                     },
                     "500": {
-                        "description": "Failed to retrieve products"
+                        "description": "Server error"
                     }
                 }
             },
@@ -47,26 +47,20 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ProductInput"
-                            },
-                            "example": {
-                                "name": "Motorcycle Gloves",
-                                "quantity": 15,
-                                "price": 24.99,
-                                "category": "Safety Gear"
+                                "$ref": "#/components/schemas/Product"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "description": "Product created successfully. Returns the new product ID."
+                        "description": "Product created successfully"
                     },
                     "400": {
                         "description": "Invalid product data"
                     },
                     "500": {
-                        "description": "Failed to create product"
+                        "description": "Server error"
                     }
                 }
             }
@@ -77,7 +71,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "MongoDB product ID",
+                    "description": "MongoDB product ObjectId",
                     "schema": {
                         "type": "string",
                         "example": "6ad50ca04691e523e98414d7"
@@ -91,7 +85,7 @@
                 "summary": "Get a product by ID",
                 "responses": {
                     "200": {
-                        "description": "Product found"
+                        "description": "Product retrieved successfully"
                     },
                     "400": {
                         "description": "Invalid product ID"
@@ -100,7 +94,7 @@
                         "description": "Product not found"
                     },
                     "500": {
-                        "description": "Failed to retrieve product"
+                        "description": "Server error"
                     }
                 }
             },
@@ -109,25 +103,20 @@
                     "Products"
                 ],
                 "summary": "Update a product",
+                "description": "All four product fields are required and validated.",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ProductInput"
-                            },
-                            "example": {
-                                "name": "Motorcycle Gloves",
-                                "quantity": 20,
-                                "price": 29.99,
-                                "category": "Safety Gear"
+                                "$ref": "#/components/schemas/Product"
                             }
                         }
                     }
                 },
                 "responses": {
                     "204": {
-                        "description": "Product updated successfully"
+                        "description": "Product updated successfully; no response body"
                     },
                     "400": {
                         "description": "Invalid product ID or product data"
@@ -136,7 +125,7 @@
                         "description": "Product not found"
                     },
                     "500": {
-                        "description": "Failed to update product"
+                        "description": "Server error"
                     }
                 }
             },
@@ -156,7 +145,7 @@
                         "description": "Product not found"
                     },
                     "500": {
-                        "description": "Failed to delete product"
+                        "description": "Server error"
                     }
                 }
             }
@@ -164,7 +153,7 @@
     },
     "components": {
         "schemas": {
-            "ProductInput": {
+            "Product": {
                 "type": "object",
                 "required": [
                     "name",
@@ -175,6 +164,7 @@
                 "properties": {
                     "name": {
                         "type": "string",
+                        "minLength": 1,
                         "example": "Motorcycle Helmet"
                     },
                     "quantity": {
@@ -189,6 +179,7 @@
                     },
                     "category": {
                         "type": "string",
+                        "minLength": 1,
                         "example": "Safety Gear"
                     }
                 }

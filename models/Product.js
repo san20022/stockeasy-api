@@ -1,5 +1,8 @@
-
 function validateProduct(product) {
+    if (!product || typeof product !== "object" || Array.isArray(product)) {
+        return "Product data must be an object.";
+    }
+
     const { name, quantity, price, category } = product;
 
     if (
